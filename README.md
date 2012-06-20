@@ -11,6 +11,7 @@ Some differences are:
 
 # Installation
 
+	go get github.com/foolusion/squeaker
 	go install github.com/foolusion/squeaker
 
 More to come
