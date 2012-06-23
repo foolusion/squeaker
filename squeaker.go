@@ -1,46 +1,36 @@
 package main
 
 import (
-	"bufio"
-	"encoding/json"
-    "fmt"
-    "os"
+	"sync"
 	"time"
 )
 
-type Topic struct {
-    Title string
-    Squeaks []Squeak
+type Squeaker struct {
+	topics map[string][]Squeak
+	mu     sync.RWMutex
 }
 
 type Squeak struct {
-    UUID, Message string
-    Timestamp time.Time
+	UUID, Message string
+	Time          time.Time
 }
 
-func Get(title string) ([]Squeak, error) {
-    filename := fmt.Sprintf("%s.json", title)
-    f, err := os.Open(filename)
-    if err != nil {
-        if os.IsNotExist(err) {
-            return nil, nil
-        }
-        return nil, err
-    }
-	var t Topic
-	err = json.NewDecoder(bufio.NewReader(f)).Decode(&t)
-	if err != nil {
-		return nil, err
-	}
-	return t.Squeaks, nil
+func NewSqueaker() *Squeaker {
+	return &Squeaker{topics: make(map[string][]Squeak)}
 }
 
-func main() {
-	s, err := Get("test")
-	if err != nil {
-		panic(err)
+func (s *Squeaker) Get(title string) []Squeak {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return s.topics[title]
+}
+
+func (s *Squeaker) Add(title string, message string) {
+	squeak := Squeak{genUUID(), message, time.Now()}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, present := s.topics[title]; !present {
+		s.topics[title] = make([]Squeak, 0, 100)
 	}
-	for _, v := range s {
-		fmt.Println(v.Message)
-	}
+	s.topics[title] = append(s.topics[title], squeak)
 }
