@@ -26,7 +26,7 @@ func (s *Squeaker) Get(title string) []Squeak {
 }
 
 func (s *Squeaker) Add(title string, message string) {
-	squeak := Squeak{genUUID(), message, time.Now()}
+	squeak := Squeak{UUID(), message, time.Now()}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if _, present := s.topics[title]; !present {

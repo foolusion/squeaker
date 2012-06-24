@@ -8,11 +8,10 @@ import (
 var squeaker = NewSqueaker()
 
 const (
-		lenPath = len("/s/")
-		lenSqueak = len("/squeak/")
-		lenSave = len("/save/")
+	lenPath   = len("/s/")
+	lenSqueak = len("/squeak/")
+	lenSave   = len("/save/")
 )
-
 
 func main() {
 	http.HandleFunc("/", homeHandler)
@@ -36,26 +35,29 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 func topicHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[lenPath:]
-	fmt.Fprintf(w, "<h1>%s</h1><a href=\"/squeak/%s\">squeak</a><a href=\"/\">Home</a>", title, title)
+	fmt.Fprintf(w, "<h1>%s</h1><a href=\"/squeak/%s\">squeak</a> <a href=\"/\">Home</a>", title, title)
 	for _, v := range squeaker.topics[title] {
 		fmt.Fprintf(w, "<div><h2>%s</h2><p>%s</p><p>%v</p></div>", v.Message, v.UUID, v.Time)
+	}
+	if _, present := squeaker.topics[title]; !present {
+		fmt.Fprint(w, "<div><h2>No Squeaks Yet</h2></div>")
 	}
 }
 
 func squeakHandler(w http.ResponseWriter, r *http.Request) {
-		title := r.URL.Path[lenSqueak:]
-		fmt.Fprintf(w,
-		"<h1> Squeaking on %s</h1>" +
-		"<form action=\"/save/%s\" method=\"POST\">" +
-		"<textarea name=\"message\" rows=\"2\" cols=\"80\" maxlength=\"140\"></textarea>" +
-		"<input type=\"submit\" value=\"squeak\">" +
-		"</form>",
+	title := r.URL.Path[lenSqueak:]
+	fmt.Fprintf(w,
+		"<h1> Squeaking on %s</h1>"+
+			"<form action=\"/save/%s\" method=\"POST\">"+
+			"<textarea name=\"message\" rows=\"2\" cols=\"80\" maxlength=\"140\"></textarea>"+
+			"<input type=\"submit\" value=\"squeak\">"+
+			"</form>",
 		title, title)
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
-		title := r.URL.Path[lenSave:]
-		message := r.FormValue("message")
-		squeaker.Add(title, message)
-		http.Redirect(w, r, "/s/"+title, http.StatusFound)
+	title := r.URL.Path[lenSave:]
+	message := r.FormValue("message")
+	squeaker.Add(title, message)
+	http.Redirect(w, r, "/s/"+title, http.StatusFound)
 }
