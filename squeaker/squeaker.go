@@ -9,7 +9,7 @@ type Squeaker interface {
 	Get(title string) []Squeak
 	Squeak(title, message string)
 	Topics() []string
-    Len(title string) int
+	Len(title string) int
 }
 
 type MapSqueaker struct {
@@ -51,5 +51,5 @@ func (s *MapSqueaker) Topics() []string {
 }
 
 func (s *MapSqueaker) Len(title string) int {
-    return len(s.topics[title])
+	return len(s.topics[title])
 }

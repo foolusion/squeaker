@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-    "html/template"
+	"html/template"
 	"net/http"
 
 	"github.com/foolusion/squeaker/squeaker"
@@ -16,52 +15,69 @@ const (
 	lenSave   = len("/save/")
 )
 
+type page struct {
+	Title   string
+	Squeaks []squeaker.Squeak
+}
+
 func main() {
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/s/", topicHandler)
+	http.HandleFunc("/search/", searchHandler)
 	http.HandleFunc("/squeak/", squeakHandler)
 	http.HandleFunc("/save/", saveHandler)
 	http.ListenAndServe(":8080", nil)
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-    t, err := template.ParseFiles("home.html")
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    err = t.Execute(w, sq)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-    }
+	t, err := template.ParseFiles("home.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = t.Execute(w, sq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func topicHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[lenPath:]
 	squeaks := sq.Get(title)
-	fmt.Fprintf(w, "<h1>%s</h1><a href=\"/\">Home</a> <a href=\"/squeak/%s\">squeak</a>", title, title)
-	for _, v := range squeaks {
-		fmt.Fprintf(w, "<div><h2>%s</h2><p>%s</p><p>%v</p></div>", v.Message, v.UUID, v.Time)
+	p := page{title, squeaks}
+	t, err := template.ParseFiles("view.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	if len(squeaks) == 0 {
-		fmt.Fprint(w, "<div><h2>No Squeaks Yet</h2></div>")
+	err = t.Execute(w, p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 func squeakHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[lenSqueak:]
-	fmt.Fprintf(w,
-		"<h1> Squeaking on %s</h1>"+
-			"<form action=\"/save/%s\" method=\"POST\">"+
-			"<textarea name=\"message\" rows=\"2\" cols=\"80\" maxlength=\"140\"></textarea>"+
-			"<input type=\"submit\" value=\"squeak\">"+
-			"</form>",
-		title, title)
+	p := page{Title: title}
+	t, err := template.ParseFiles("squeak.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = t.Execute(w, p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[lenSave:]
 	message := r.FormValue("message")
 	sq.Squeak(title, message)
+	http.Redirect(w, r, "/s/"+title, http.StatusFound)
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.FormValue("q")
 	http.Redirect(w, r, "/s/"+title, http.StatusFound)
 }

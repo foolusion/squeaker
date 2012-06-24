@@ -5,13 +5,19 @@
         <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
     </head>
     <body>
-        <div id="titlebar">
+        <div id="header">
             <h1>Squeaker</h1>
+            <form action="/search/" method="GET">
+                <input size="30" name="q" value type="text">
+                <input type="submit" value="View">
+            </form>
         </div>
         <div id="content">
             {{if $self := .}}
             {{range $v := .Topics}}
-            <p><a href="/s/{{$v}}">{{$v}}</a> {{$self.Len $v}}</p>
+            <p><a href="/s/{{$v}}">{{$v}}</a> {{$self.Len $v}} squeaks</p>
+            {{else}}
+            <h2>Start Squeaking</h2>
             {{end}}{{end}}
         </div>
     </body>

@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <head>
+        <title>{{.Title}}</title>
+    </head>
+    <body>
+        <div id="header">
+            <h1>Squeaking on {{.Title}}</h1>
+        </div>
+        <div id="content">
+            <form action="/save/{{.Title}}" method="POST">
+                <textarea name="message" rows="4" cols="80" maxlength="255"></textarea>
+                <input type="submit" value="squeak">
+            </form>
+        </div>
+    </body>
+</html>

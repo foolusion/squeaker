@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <title>{{.Title}}</title>
+    </head>
+    <body>
+        <div id="header">
+            <h1>{{.Title}}</h1>
+            [<a href="/">Home</a>] [<a href="/squeak/{{.Title}}">squeak</a>]
+        </div>
+        <div id="content">
+            {{range $x := .Squeaks}}
+            <div id="{{$x.UUID}}" class="squeak">
+                <h2>{{$x.Message}}</h2>
+                <p>{{$x.UUID}}</p>
+                <p>{{$x.Time}}</p>
+            </div>
+            {{else}}
+            <div id="none">
+                <h2>There is nothing here</h2>
+            </div>
+            {{end}}
+        </div>
+    </body>
+</html>
