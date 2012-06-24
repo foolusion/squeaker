@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"html/template"
 	"net/http"
 
@@ -8,6 +9,7 @@ import (
 )
 
 var sq = squeak.NewMapSqueaker()
+var pPort = flag.Int("port", 8080, "the port to host squeaker on")
 
 const (
 	lenPath   = len("/s/")
@@ -21,12 +23,14 @@ type page struct {
 }
 
 func main() {
+	flag.Parse()
+	port = ":" + string(*port)
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/s/", topicHandler)
 	http.HandleFunc("/search/", searchHandler)
 	http.HandleFunc("/squeak/", squeakHandler)
 	http.HandleFunc("/save/", saveHandler)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(port, nil)
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
