@@ -4,6 +4,7 @@ import (
 	"flag"
 	"html/template"
 	"net/http"
+	"strconv"
 
 	"github.com/foolusion/squeaker/squeak"
 )
@@ -24,7 +25,7 @@ type page struct {
 
 func main() {
 	flag.Parse()
-	port = ":" + string(*port)
+	port := ":" + strconv.Itoa(*pPort)
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/s/", topicHandler)
 	http.HandleFunc("/search/", searchHandler)
