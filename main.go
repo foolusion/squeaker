@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-    "./squeaker"
+	"github.com/foolusion/squeaker/squeaker"
 )
 
 var sq = squeaker.NewMapSqueaker()
