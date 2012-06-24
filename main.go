@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+    "html/template"
 	"net/http"
 
 	"github.com/foolusion/squeaker/squeaker"
@@ -25,15 +26,15 @@ func main() {
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<h1>Squeaker</h1>")
-	count := 0
-	for _, v := range sq.Topics() {
-		if count < 100 {
-			fmt.Fprintf(w, "<div><a href=\"/s/%s\">%s</a> %d squeaks</div>", v,
-				v, len(sq.Get(v)))
-		} else {
-			break
-		}
-	}
+    t, err := template.ParseFiles("home.html")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    err = t.Execute(w, sq)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
 }
 
 func topicHandler(w http.ResponseWriter, r *http.Request) {

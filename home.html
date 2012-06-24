@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Squeaker</title>
+        <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
+    </head>
+    <body>
+        <div id="titlebar">
+            <h1>Squeaker</h1>
+        </div>
+        <div id="content">
+            {{range $v := .Topics}}
+            <p><a href="/s/{{$v}}">{{$v}}</a> {{ .Len $v}}</p>
+            {{end}}
+        </div>
+    </body>
+</html>
