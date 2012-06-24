@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+    "./squeaker"
 )
 
-var squeaker = NewSqueaker()
+var sq = squeaker.NewMapSqueaker()
 
 const (
 	lenPath   = len("/s/")
@@ -24,9 +26,10 @@ func main() {
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<h1>Squeaker</h1>")
 	count := 0
-	for k, v := range squeaker.topics {
+	for _, v := range sq.Topics() {
 		if count < 100 {
-			fmt.Fprintf(w, "<div><a href=\"/s/%s\">%s</a> %d squeaks</div>", k, k, len(v))
+			fmt.Fprintf(w, "<div><a href=\"/s/%s\">%s</a> %d squeaks</div>", v,
+				v, len(sq.Get(v)))
 		} else {
 			break
 		}
@@ -35,11 +38,12 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 func topicHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[lenPath:]
+	squeaks := sq.Get(title)
 	fmt.Fprintf(w, "<h1>%s</h1><a href=\"/squeak/%s\">squeak</a> <a href=\"/\">Home</a>", title, title)
-	for _, v := range squeaker.topics[title] {
+	for _, v := range squeaks {
 		fmt.Fprintf(w, "<div><h2>%s</h2><p>%s</p><p>%v</p></div>", v.Message, v.UUID, v.Time)
 	}
-	if _, present := squeaker.topics[title]; !present {
+	if len(squeaks) == 0 {
 		fmt.Fprint(w, "<div><h2>No Squeaks Yet</h2></div>")
 	}
 }
@@ -58,6 +62,6 @@ func squeakHandler(w http.ResponseWriter, r *http.Request) {
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[lenSave:]
 	message := r.FormValue("message")
-	squeaker.Add(title, message)
+	sq.Squeak(title, message)
 	http.Redirect(w, r, "/s/"+title, http.StatusFound)
 }
