@@ -1,4 +1,4 @@
-package squeaker
+package squeak
 
 import (
 	"crypto/rand"

@@ -4,10 +4,10 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/foolusion/squeaker/squeaker"
+	"github.com/foolusion/squeaker/squeak"
 )
 
-var sq = squeaker.NewMapSqueaker()
+var sq = squeak.NewMapSqueaker()
 
 const (
 	lenPath   = len("/s/")
@@ -17,7 +17,7 @@ const (
 
 type page struct {
 	Title   string
-	Squeaks []squeaker.Squeak
+	Squeaks []squeak.Squeak
 }
 
 func main() {
