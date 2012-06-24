@@ -10,7 +10,7 @@
         </div>
         <div id="content">
             {{range $v := .Topics}}
-            <p><a href="/s/{{$v}}">{{$v}}</a> {{ .Len $v}}</p>
+            <p><a href="/s/{{$v}}">{{$v}}</a> {{$.Len $v}}</p>
             {{end}}
         </div>
     </body>

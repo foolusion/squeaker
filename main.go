@@ -25,7 +25,6 @@ func main() {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<h1>Squeaker</h1>")
     t, err := template.ParseFiles("home.html")
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
