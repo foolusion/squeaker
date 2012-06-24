@@ -9,9 +9,10 @@
             <h1>Squeaker</h1>
         </div>
         <div id="content">
+            {{if $self := .}}
             {{range $v := .Topics}}
-            <p><a href="/s/{{$v}}">{{$v}}</a> {{$.Len $v}}</p>
-            {{end}}
+            <p><a href="/s/{{$v}}">{{$v}}</a> {{$self.Len $v}}</p>
+            {{end}}{{end}}
         </div>
     </body>
 </html>
