@@ -39,7 +39,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 func topicHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[lenPath:]
 	squeaks := sq.Get(title)
-	fmt.Fprintf(w, "<h1>%s</h1><a href=\"/squeak/%s\">squeak</a> <a href=\"/\">Home</a>", title, title)
+	fmt.Fprintf(w, "<h1>%s</h1><a href=\"/\">Home</a> <a href=\"/squeak/%s\">squeak</a>", title, title)
 	for _, v := range squeaks {
 		fmt.Fprintf(w, "<div><h2>%s</h2><p>%s</p><p>%v</p></div>", v.Message, v.UUID, v.Time)
 	}
